@@ -11,10 +11,16 @@
 | スキル | 用途 |
 |---|---|
 | [`japanese-text-editor`](skills/japanese-text-editor/SKILL.md) | 事実と意味を保ちながら、日本語の文章を校正・校閲する |
-| [`prompt-optimizer`](skills/prompt-optimizer/SKILL.md) | LLM向けの指示を、明確で再利用可能なプロンプトへ改善する |
+| [`prompt-optimizer`](skills/prompt-optimizer/SKILL.md)（プロンプト改善太郎） | LLM・Cursor向けの依頼を、目的・制約・検証が明確なプロンプトへ改善する |
 | [`infrastructure-change-reviewer`](skills/infrastructure-change-reviewer/SKILL.md) | インフラ変更案の影響、前提、ロールバック、検証方法を確認する |
 
 ## 使い方
+
+### Cursorでプロンプト改善太郎を使う
+
+`skills/prompt-optimizer/` をフォルダーごと、作業プロジェクトの `.cursor/skills/prompt-optimizer/` へ配置します。Agentの `/` メニューから `prompt-optimizer` を選び、改善したい原案を渡してください。
+
+[Cursor向けの導入手順・使用例・確認範囲](docs/cursor-prompt-optimizer.md)を参照してください。2026-10-07の公式情報を反映しています。配布版の構造と内容を検証し、Cursor実機での動作確認は未実施です。
 
 ### 1. リポジトリを取得する
 
