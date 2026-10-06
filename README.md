@@ -10,7 +10,7 @@
 
 | スキル | 用途 |
 |---|---|
-| [`japanese-text-editor`](skills/japanese-text-editor/SKILL.md) | 事実と意味を保ちながら、日本語の文章を校正・校閲する |
+| [`japanese-text-editor`（添削次郎）](skills/japanese-text-editor/SKILL.md) | 意味・条件・トーンを保って日本語を添削する。[Cursorでの使い方](docs/cursor-tensaku-jiro.md) |
 | [`prompt-optimizer`](skills/prompt-optimizer/SKILL.md) | LLM向けの指示を、明確で再利用可能なプロンプトへ改善する |
 | [`infrastructure-change-reviewer`](skills/infrastructure-change-reviewer/SKILL.md) | インフラ変更案の影響、前提、ロールバック、検証方法を確認する |
 
@@ -43,6 +43,10 @@ Copy-Item -Recurse skills\japanese-text-editor "$userProfile\.agents\skills\"
 ```
 
 ほかの配置方法と対応範囲は、[互換性ガイド](docs/compatibility.md)をご覧ください。
+
+### Cursorで添削次郎を使う
+
+[導入ガイド](docs/cursor-tensaku-jiro.md)から、Skill版または手動Rule版を選べます。2026-10-07にCursor公式資料を再確認し、必要時の呼び出し、継続添削用Custom Mode、対象範囲の限定に対応しています。Cursor実機での動作は未検証です。
 
 ## 新しいスキルを作る
 
