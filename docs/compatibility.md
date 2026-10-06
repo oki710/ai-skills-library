@@ -1,6 +1,6 @@
 # 互換性ガイド
 
-このリポジトリは、[Agent Skills仕様](https://agentskills.io/specification)に沿った `SKILL.md` を配布します。共通・既存製品の確認日は2026年9月2日、Cursorの追加確認日は2026年10月7日です。
+このリポジトリは、[Agent Skills仕様](https://agentskills.io/specification)に沿った `SKILL.md` を配布します。共通ガイドの確認日は2026年9月2日、Cursorの追記・確認日は2026年10月7日です。
 
 ## 共通形式
 
@@ -20,9 +20,9 @@ skill-name/
 
 | 製品 | 配置先 | このリポジトリでの扱い |
 |---|---|---|
-| Cursor | プロジェクトの `.cursor/skills/` または利用者の `~/.cursor/skills/` | 公式仕様に合わせたソースを収録。実機動作は未確認 |
 | ChatGPTデスクトップ内のCodex / Codex CLI / IDE拡張 | リポジトリまたはユーザーの `.agents/skills/` | 対応 |
 | ChatGPTのChat / Work | スタンドアロンスキルまたはプラグイン | ソースとして対応。配布用パッケージは未収録 |
+| Cursor | `.cursor/skills/` または `.agents/skills/` | 公式仕様に沿った配置に対応。実機検証は未実施 |
 | Gemini CLI | `.gemini/skills/` または `.agents/skills/` | 対応 |
 | その他のAgent Skills対応製品 | 製品の指定するskillsフォルダ | 仕様互換。実行前に各製品の資料を確認 |
 
@@ -54,9 +54,15 @@ Webやモバイルを含む広い配布には、OpenAIはプラグインとし�
 
 対話セッションでは `/skills list` で検出状況を確認できます。追加したスキルが表示されない場合は `/skills reload` を実行します。ワークスペース内のスキルを使うには、そのフォルダが信頼済みである必要があります。
 
-## 互換性の範囲
+## Cursor
 
-Cursor向けの配置、呼び出し例、ローカルとCloud Agentsの違いは[導入手順](cursor-prompt-optimizer.md)を参照してください。共通スキルにCursor専用の手動起動制御は追加していません。手動限定にしたい場合は、導入側で現行仕様と動作を確認して設定してください。
+[公式のSkills資料](https://cursor.com/docs/skills)では、プロジェクト内の `.cursor/skills/` と `.agents/skills/` を読み込みます。両方へ同じスキルを置かず、配置先を1つ選んでください。`/` の候補から手動呼び出しができます。対応画面では、[Custom Mode](https://cursor.com/docs/agent/prompting)として継続適用する方法もあります。
+
+添削次郎は[専用ガイド](cursor-tensaku-jiro.md)に、Skill版と手動Rule版の配置・使用例・検証範囲をまとめています。このリポジトリはファイルのコピーによる配布方式で、Cursor Marketplace用パッケージは収録していません。
+
+プロンプト改善太郎は[導入手順](cursor-prompt-optimizer.md)に、配置、呼び出し例、ローカルとCloud Agentsの違いをまとめています。共通スキルにCursor専用の手動起動制御は追加していません。手動限定にしたい場合は、導入側で現行仕様と動作を確認して設定してください。
+
+## 互換性の範囲
 
 このリポジトリの検証は、ファイル構造とfrontmatterを対象とします。各製品での自動選択、使用できるツール、権限、確認画面は製品ごとに異なります。公開前には、対象製品で実際の依頼を使って動作を確認してください。
 
