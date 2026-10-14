@@ -1,0 +1,4 @@
+interface:
+  display_name: "プロンプト改善三郎"
+  short_description: "開発・改修の依頼を、要求・設計・テストが対応する実行用プロンプトへ整える"
+  default_prompt: "$prompt-improver-saburo で、この開発依頼を受入条件と変更範囲が明確なプロンプトへ改善してください。"
