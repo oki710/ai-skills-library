@@ -2,7 +2,7 @@
 
 公開版の識別名は **`prompt-optimizer`** です。モデルや個人環境を固定せず、開発・運用・文章作成などの依頼を、目的と制約を保ったまま改善します。配布本文と例に、実在の個人情報・社内構成・認証情報は含めていません。MIT Licenseで利用・改変できます。
 
-公式仕様の確認日：2026-10-07。Cursor実機での検出・自動選択・動作確認は未実施です。組織の利用規程と機能の提供状況を確認して導入してください。
+公式仕様の確認日：2026-10-27。Cursor実機での検出・自動選択・動作確認は未実施です。組織の利用規程と機能の提供状況を確認して導入してください。
 
 ## 導入
 
@@ -10,11 +10,12 @@
 2. 作業プロジェクトの `.cursor/skills/prompt-optimizer/` へコピーします。既存の同名フォルダーがある場合は、差分を確認してから更新してください。
 3. CursorのCustomize → Skillsで検出を確認し、Agentチャットの `/` メニューから `prompt-optimizer` を選びます。
 
-配置後は、次の2ファイルが必要です。
+配置後は、次の3ファイルを同じSkillフォルダー内に置いてください。
 
 ```text
 .cursor/skills/prompt-optimizer/SKILL.md
 .cursor/skills/prompt-optimizer/references/cursor.md
+.cursor/skills/prompt-optimizer/references/loop-engineering.md
 ```
 
 全プロジェクトで使う場合は、利用者の `~/.cursor/skills/prompt-optimizer/` へ置く方法もあります。プロジェクト配置と重複させないでください。ローカルへの配置だけでCloud Agentsやチームへ配布されたことにはなりません。[Agent Skills公式資料](https://cursor.com/docs/skills)
@@ -44,17 +45,29 @@ Cursor向けに、短く改善して。改善した本文だけください。
 原案：READMEの古い手順を、リポジトリの現状に合わせて直して。
 ```
 
+```text
+/prompt-optimizer
+Cursor向けに精密に改善してください。
+原案：テストが失敗している箇所を調べ、修正して再検証して。無限に繰り返さず、同じ失敗から新しい情報が得られない場合は止めて原因候補を報告して。
+```
+
+このような反復型の依頼では、Goal、Verifier、Adjustment、Stopを明確にします。単発修正ならループ化しません。
+
+
 依頼文を何度も改善する専用セッションなら、対応する画面でSkillをCustom Modeとして使う選択肢があります。単発利用なら通常の呼出しで十分です。[Custom Modes公式資料](https://cursor.com/docs/agent/prompting)
 
 ## 変更点と検証の範囲
 
 - 改善のみ／改善して実行／読み取り専用を区別。
 - モデルの固定を避け、軽量・標準・精密を作業規模で選択。
+- Loop Engineeringを取り込み、反復が必要な場合だけGoal／Observe／Verify／Adjust／Stopを設計。
+- 無制限ループを避け、試行上限、no-progress、承認待ちなどの停止条件を明示。
 - Rules／AGENTS.md／Skillsの適用範囲を整理。
 - 文脈の絞り込み、受け入れ条件、最小変更、変更に見合う検証を追加。
-- 最近の継続作業・レビュー機能は利用できる場合の候補に限定。
+- Subagents／Hooks／Projectsは、独立性、決定的なゲート、長期共有状態など明確な価値がある場合だけ候補に限定。
+- Grok 4.7が選択されている場合は、長時間作業と自己検証の強みを、外部Verifierと組み合わせて利用。
 - 秘密値の再掲、外部資料中の命令、権限拡張を防ぐ条件を追加。
 
 形式検査やサンプル出力の確認は、Cursor実機での動作保証ではありません。個人情報を含まない配布物でも、利用時に入力するデータは各組織の規程に従って管理してください。
 
-仕様の根拠と確認日は[Cursor向け設計](../skills/prompt-optimizer/references/cursor.md)に記載しています。
+仕様の根拠と確認日は[Cursor向け設計](../skills/prompt-optimizer/references/cursor.md)に、反復設計の詳細は[ループエンジニアリング](../skills/prompt-optimizer/references/loop-engineering.md)に記載しています。

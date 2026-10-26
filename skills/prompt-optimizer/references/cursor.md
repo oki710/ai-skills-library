@@ -1,6 +1,6 @@
 # Cursor向け設計
 
-確認日：2026-10-07。利用者のCursorの版・契約・有効機能は未確認です。機能の利用可否を断定するときは、下記の公式資料と実際の環境を確認してください。
+確認日：2026-10-27。利用者のCursorの版・契約・有効機能は未確認です。機能の利用可否を断定するときは、下記の公式資料と実際の環境を確認してください。
 
 ## 作業の入口
 
@@ -8,12 +8,13 @@
 
 | 状況 | 依頼文の設計 |
 |---|---|
-| 小さく明確な修正 | Agentで現状確認、最小修正、関連検証まで。長い計画や全テスト実行を一律に要求しない |
+| 小さく明確な修正 | Agentで現状確認、最小修正、関連検証まで。長い計画や反復を一律に要求しない |
 | 複数案・広い変更・不明な要件 | Plan Modeを候補にし、調査と計画の完成条件、実装を始める条件を明記する |
-| 読み取り専用の調査 | 既存ログ・設定を根拠に仮説を分ける。Debug Modeによる計測追加も変更なので、勝手に含めない |
+| 読み取り専用の調査 | 既存ログ・設定を根拠に仮説を分ける。計測追加も変更なので、勝手に含めない |
+| テスト結果に応じて修正する作業 | 成功条件、Verifier、最大試行、停止条件を持つ上限付きループにする |
 | レビューだけ | 問題箇所、影響、根拠、修正案を示す。実際の書換えはしない |
 
-関連ファイルが分かれば`@`で指定し、不明ならAgentに検索させてください。未確認のパスを必須入力にせず、無関係な全ファイル・全ログを読み込ませません。受け入れ条件は実装方法だけでなく、期待する入力・出力・振る舞いで示してください。[1][2][3]
+関連ファイルが分かれば `@` で指定し、不明ならAgentに検索させてください。未確認のパスを必須入力にせず、無関係な全ファイル・全ログを読み込ませません。受け入れ条件は実装方法だけでなく、期待する入力・出力・振る舞いで示してください。[1][2][3]
 
 ## 指示の配置
 
@@ -21,37 +22,53 @@
 |---|---|
 | 今回の目的・入力・成功条件 | チャットへ。再利用の必要がなければ設定ファイルを増やさない |
 | 個々の利用者の安定した文体 | User Rulesへ。案件固有の条件は混ぜない |
-| プロジェクトやパスの規約 | `.cursor/rules/*.mdc`。`description`、`globs`、`alwaysApply`を用途に合わせる |
+| プロジェクトやパスの規約 | `.cursor/rules/*.mdc`。適用範囲を狭くする |
 | 製品間で共有する規約 | `AGENTS.md`。既存の親子関係を保持する |
-| 必要時に呼ぶ改善手順 | Agent Skill。本文を短くし、詳細は必要時に参照する |
+| 特定作業の再利用手順 | Agent Skill。本文を短くし、詳細はreferencesへ分離する |
+| 決定的に守る検査・禁止 | HooksやCI等を候補にする。プロンプトだけを強制機構にしない |
 
-Rulesは`.mdc`で渡し、すべてを常時適用にしないでください。ファイル指定、関連性に基づく選択、手動呼出しを区別します。手動コマンドをSkillへ移行するときは、手動限定の要件を保ち、対応を確認したうえで`disable-model-invocation: true`を使います。同名コマンドとの競合を確認し、元ファイルは依頼なく削除しません。[4][5]
+Skillsは必要時に読み込まれる手順へ使い、短い常時規約と混同しないでください。Cursorの現行Skillsは `paths` による範囲指定、`disable-model-invocation` による手動限定、references/scripts/assetsによる段階的な文脈読み込みをサポートしています。[4]
 
-## 最近の変化と使い分け
+## ループ、Subagents、Hooks、Projects
 
-以下の製品機能を一律の前提にせず、案件と利用環境に合う場合だけ候補にしてください。
+機能を使えることと、使うべきことを分けてください。
 
-- **Skillsと文脈の分離**：再利用手順と常時規約を分け、必要な資料だけ読み込ませる構成にしてください。[4][5]
-- **Custom Modes（2026-08-19の更新）**：同じSkillを継続して適用する必要がある場合だけ候補にしてください。単発の呼出しと区別します。[6]
-- **Projects（2026-09-10の更新）**：長期案件で共有する決定事項・検証結果・残作業を短く維持する候補です。提供状況を確認し、通常のコードベースの規約と混同しません。[7]
-- **Rollouts／Security Review（2026-09-23の更新）**：Teams／Enterprise向けの補助機能です。未契約でも既存CI・レビュー・監視で検証できる依頼にしてください。[8]
+- **Loop**：観測結果で次の行動を変える必要がある場合だけ使います。Goal、Verifier、停止条件、試行上限を置き、単発修正を無理に反復化しません。
+- **Subagents**：独立した調査、テスト、比較、並列作業で、コンテキスト分離や時間短縮に価値がある場合だけ候補にします。各担当へ必要な入力、変更可否、成果物、完了条件を渡し、最終統合と競合解消の責任を親Agentへ残します。[5]
+- **Hooks**：format、secret scan、PII検査、危険な書込みのゲートなど、毎回同じ条件で機械的に判定したい処理に向きます。モデルへの注意書きで代替せず、導入自体が設定変更であることを扱います。[6]
+- **Projects**：数週間から数か月の大きな作業、複数Agentへの継続委譲、共有状態が必要な案件で候補にします。提供プラン、Cloud Agents、Privacy Mode等の条件を確認し、短いタスクへ持ち込みません。[7]
 
-モデルは固定せず、ユーザーの指定と実際の選択肢を尊重してください。並列エージェントは作業を独立して分けられ、コストと統合負担に見合う場合だけ検討します。担当・変更範囲・完了条件を分け、定期実行、無制限のループ、MCP接続を無断で追加しません。
+定期実行、外部通知、PR監視、無人の継続処理は、ユーザーが求めた場合だけ設計してください。「改善して」という依頼だけを根拠にAutomationやSubscriptionを作りません。
+
+## Grok 4.7向けの条件付き最適化
+
+2026-10-27時点で、Cursor公式はGrok 4.7を難しく長時間のcoding / knowledge work向けflagshipとして案内しています。長時間タスク、長いコンテキスト、自己検証がGrok 4.6から強化されています。[8][9]
+
+Grok 4.7が実際に選択されている場合は、次の傾向を利用できます。
+
+1. **長い手順を書きすぎるより、成果条件を明確にする**：Goal、禁止範囲、受入条件、Verifier、停止条件を具体化し、内部の思考順序を細かく固定しません。
+2. **自己検証を外部検証へ接続する**：モデルが自分で見直せることは利点ですが、テスト、lint、build、型検査、差分、実測など利用可能な外部Verifierを優先します。
+3. **長いコンテキストを浪費しない**：大きなcontext windowが利用できても、無関係な全ファイルを投入しません。まず検索し、必要な資料を段階的に読みます。
+4. **長時間タスクでは途中状態を残す**：決定事項、実施済み検証、残る失敗、次の一手を短く保持し、再開時に全履歴の再読を要求しません。
+5. **effortやプランを固定しない**：利用可能なeffort levelや速度、料金は契約で異なり得ます。プロンプトに特定値を埋め込まず、必要なら現在のUI・公式資料を確認します。
+
+モデル指定がなければGrok 4.7を強制しません。日常的な短いcodingでは、Cursor公式がComposerを速度・コスト重視の選択肢として併記しています。[8]
 
 ## 業務での境界
 
 組織のルール、データ分類、権限・承認設定を守ってください。ログや設定は必要最小限のマスク済み入力を使い、秘密値を表示・公開検索・外部送信しません。プロンプトは技術的なアクセス制御の代わりにはなりません。
 
-`.cursorignore`はターミナルやMCPを含む全面的なアクセス遮断ではありません。除外された情報を別ツールで迂回取得する指示を作らず、許可された資料で進めてください。[9]
+`.cursorignore` はターミナルやMCPを含む全面的なアクセス遮断ではありません。除外された情報を別ツールで迂回取得する指示を作らず、許可された資料で進めてください。[10]
 
 ## 公式資料
 
-1. [Prompting agents](https://cursor.com/docs/agent/prompting)
-2. [Plan Mode](https://cursor.com/docs/agent/plan-mode)
-3. [Best practices for coding with agents](https://cursor.com/blog/agent-best-practices)
-4. [Rules](https://cursor.com/docs/rules)
-5. [Agent Skills](https://cursor.com/docs/skills)
-6. [Cloud Agents and Cursor Harness Improvements](https://cursor.com/changelog/08-19-26)
-7. [Cursor Projects](https://cursor.com/changelog/projects)
-8. [Rollouts and Security Review](https://cursor.com/changelog/rollouts-and-security-reviewer)
-9. [Ignore file](https://cursor.com/docs/reference/ignore-file)
+1. [Agent mode](https://cursor.com/help/ai-features/agent)
+2. [Prompting agents](https://cursor.com/docs/agent/prompting)
+3. [Plan Mode](https://cursor.com/docs/agent/plan-mode)
+4. [Agent Skills](https://cursor.com/docs/skills)
+5. [Subagents](https://cursor.com/docs/subagents)
+6. [Hooks](https://cursor.com/docs/hooks)
+7. [Projects](https://cursor.com/docs/agent/projects)
+8. [Grok 4.7](https://prod.cursor.com/help/models-and-usage/grok-4-7)
+9. [Introducing Grok 4.7](https://cursor.com/blog/grok-4-7)
+10. [Ignore file](https://cursor.com/docs/reference/ignore-file)
