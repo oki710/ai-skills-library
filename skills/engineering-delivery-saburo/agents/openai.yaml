@@ -1,4 +1,0 @@
-interface:
-  display_name: "開発実行三郎"
-  short_description: "開発・改修を、現状調査から設計・実装・検証・引継ぎまで進める"
-  default_prompt: "$engineering-delivery-saburo で、この仕様をもとに設計・実装・テストまで進めてください。"
