@@ -1,11 +1,11 @@
 # プロンプト改善三郎
 
-版: 1.0.0。ソフトウェアや運用ツールの開発・改修依頼を、実装範囲と合否を判断できるプロンプトへ整えるスキルです。設計から実装・テストまで進めるため、入口と実行を分けています。
+版: 1.1.0。ソフトウェアや運用ツールの開発・改修依頼を、実装範囲と合否を判断できるプロンプトへ整えるスキルです。**プロンプト改善三郎が仕様・受入条件・実行ループを設計し、開発実行四郎が実装・検証を進める**よう、入口と実行を分けています。
 
 | スキル | 役割 |
 | --- | --- |
 | [prompt-improver-saburo](../skills/prompt-improver-saburo/SKILL.md) | 目的、要求、制約、設計判断、受入条件を整理して依頼文を作成 |
-| [engineering-delivery-saburo](../skills/engineering-delivery-saburo/SKILL.md) | 現状調査、設計、最小実装、検証、レビュー、リリース準備・運用引継ぎ |
+| [engineering-delivery-shiro](../skills/engineering-delivery-shiro/SKILL.md)（開発実行四郎） | 現状調査、設計、最小実装、外部Verifier、必要な反復、レビュー、リリース準備・運用引継ぎ |
 
 「改善だけ」では対象コードを変更しません。「改善して実行」なら、許可された工程を続けます。「設計だけ」「レビューだけ」の指定も保持します。全工程を支援することは、本番変更・削除・公開への包括的な許可を意味しません。
 
@@ -18,15 +18,21 @@
 作業プロジェクトの `.cursor/skills/` に、次の2フォルダーを配置します。
 
 - `.cursor/skills/prompt-improver-saburo/`
-- `.cursor/skills/engineering-delivery-saburo/`
+- `.cursor/skills/engineering-delivery-shiro/`
 
-Agentチャットで `/` を入力し、`prompt-improver-saburo` を選択して依頼を渡します。明確な仕様で実装を始める場合は `engineering-delivery-saburo` を選べます。
+Agentチャットで `/` を入力し、`prompt-improver-saburo` を選択して依頼を渡します。明確な仕様で実装を始める場合は `engineering-delivery-shiro` を選べます。
 
-配置先と手動呼出しは、2026-10-14に[Cursor公式のAgent Skills資料](https://cursor.com/docs/skills)で確認しました。Cursor実機での動作は未検証です。利用する版で認識されることを確認してください。
+2026-10-27時点のCursor公式資料を反映し、Agent Skills、Subagents、Hooks、Projects、Grok 4.7、長時間Agentのcontext効率化を考慮しています。Grok 4.7やProjects等を必須にはせず、利用可能で作業に価値がある場合だけ使います。Cursor実機での検出・自動起動・実装品質は未検証です。
 
 ### その他の対応エージェント
 
 [互換性ガイド](compatibility.md)と利用先の公式手順に従い、2フォルダーをスキルの配置先へコピーしてください。Agent Skillsの形式と、各環境で使えるツール・権限は別です。この公開ソースを取得するだけで、ChatGPTのプラグインや各IDEへ自動登録されるわけではありません。
+
+## 1.0.0からの移行
+
+旧版の `engineering-delivery-saburo` は **`engineering-delivery-shiro`（開発実行四郎）へリネーム**しました。
+
+Cursorへ旧フォルダーを配置済みの場合は、新しい `.cursor/skills/engineering-delivery-shiro/` を配置した後、旧 `.cursor/skills/engineering-delivery-saburo/` を削除してください。両方を残すと同じ用途のSkillが重複して検出される可能性があります。削除前に独自のローカル変更がないか差分を確認してください。
 
 ## 依頼例
 
@@ -52,7 +58,7 @@ Agentチャットで `/` を入力し、`prompt-improver-saburo` を選択して
 レビューだけの場合:
 
 ```text
-開発実行三郎で、この差分をレビューしてください。
+開発実行四郎で、この差分をレビューしてください。
 要求への適合、失敗時の処理、互換性、テストの妥当性を確認してください。
 修正はまだ行わないでください。
 ```
@@ -61,7 +67,7 @@ Agentチャットで `/` を入力し、`prompt-improver-saburo` を選択して
 
 要求の数量、否定、例外、順序、互換性を、改善前後で照合します。必要に応じて責務分離、型と不変条件、データ構造と計算量、外部通信、再試行、データ整合性を具体化します。原則名を並べたり、未確認の技術選定・性能値を要件に加えたりしません。
 
-受入条件を変更箇所とテストへ結び付け、実施した検証、失敗、未実施を分けて報告します。表記修正とデータ移行では、手順と確認の深さを変えます。
+受入条件を変更箇所とテストへ結び付け、実施した検証、失敗、未実施を分けて報告します。反復が必要な場合だけ Goal → Act → Observe → Verify → Adjust → Stop を設計し、外部Verifierと停止条件を明示します。表記修正とデータ移行では、手順と確認の深さを変えます。
 
 ## 検証と限界
 
@@ -73,7 +79,7 @@ Agentチャットで `/` を入力し、`prompt-improver-saburo` を選択して
 
 yomiyasu v1.1.2、GitHub Spec Kit、Superpowers、Google Engineering Practices、NIST SSDFなどを参考にしています。[出典と採用範囲](../skills/prompt-improver-saburo/references/sources.md)に、参照した内容と未確認の範囲を記載しています。
 
-太郎は幅広い依頼の改善、三郎は開発・改修の具体化、次郎は文章の添削に使い分けられます。複数の工程管理スキルを併用する場合は、実行の主担当を決めて手順の重複を避けてください。
+太郎は幅広い依頼の改善、三郎は開発・改修の仕様化、四郎は実装・検証、次郎は文章の添削に使い分けられます。複数の工程管理スキルを併用する場合は、実行の主担当を決めて手順の重複を避けてください。
 
 ## ライセンス
 
