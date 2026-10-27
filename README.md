@@ -13,8 +13,8 @@
 | [`japanese-text-editor`（添削次郎）](skills/japanese-text-editor/SKILL.md) | 意味・条件・トーンを保って日本語を添削する。[Cursorでの使い方](docs/cursor-tensaku-jiro.md) |
 | [`prompt-optimizer`](skills/prompt-optimizer/SKILL.md)（プロンプト改善太郎） | LLM・Cursor向けの依頼を、目的・制約・検証が明確なプロンプトへ改善し、必要なら上限付き実行ループも設計する |
 | [`infrastructure-change-reviewer`](skills/infrastructure-change-reviewer/SKILL.md) | インフラ変更案の影響、前提、ロールバック、検証方法を確認する |
-| [`prompt-improver-saburo`（プロンプト改善三郎）](skills/prompt-improver-saburo/SKILL.md) | 開発依頼を、要求・設計判断・受入条件が対応するプロンプトに整える。[導入・使い方](docs/prompt-improver-saburo.md) |
-| [`engineering-delivery-saburo`（開発実行三郎）](skills/engineering-delivery-saburo/SKILL.md) | 現状調査、設計、実装、テスト、レビュー、運用引継ぎまで進める |
+| [`prompt-improver-saburo`（プロンプト改善三郎）](skills/prompt-improver-saburo/SKILL.md) | 開発依頼を、要求・設計判断・受入条件・必要な実行ループが対応するプロンプトに整える。[導入・使い方](docs/prompt-improver-saburo.md) |
+| [`engineering-delivery-shiro`（開発実行四郎）](skills/engineering-delivery-shiro/SKILL.md) | 現状調査、設計、最小実装、外部Verifier、必要な反復、レビュー、運用引継ぎまで進める |
 
 ## 使い方
 
